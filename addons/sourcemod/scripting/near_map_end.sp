@@ -83,7 +83,7 @@ public OnEnabledChange(Handle:cvar, const String:oldValue[], const String:newVal
 
 bool:IsNearMapEndEnabled()
 {
-    return GetConVarBool(g_Cvar_Enabled) &&  GetConVarInt(g_Cvar_NearMapEndTime) > 0;
+    return GetConVarBool(g_Cvar_Enabled) && GetConVarInt(g_Cvar_NearMapEndTime) > 0;
 }
 
 bool:InNearMapEnd()
@@ -99,9 +99,12 @@ public Action:Timer_Repeat( Handle:timer, any:player )
     new time_left, near_map_end_time;
     GetMapTimeLeft(time_left);
     near_map_end_time = GetConVarInt(g_Cvar_NearMapEndTime);
+
+    //LogMessage("HIT %d", time_left);//TODO
     
     if(time_left > 0 && time_left <= near_map_end_time)
     {
+        LogMessage("Near the end of the map");//TODO
         g_InNearMapEnd = true;
         StartNearMapEnd();
     }
@@ -113,8 +116,13 @@ public StartNearMapEnd()
 {
     new pitch = GetRandomInt(85, 110);
 
+    //Set some end of map settings
+    ServerCommand("fof_sv_item_respawn_time 1.0");
+    ServerCommand("fof_sv_wcrate_regentime 1.0");
+    ServerCommand("mp_disable_respawn_times 1"); //Does this do anything?
 
-    switch(GetRandomInt(0, MAX_GIMMICKS))
+    //Get random gimmick
+    switch(GetRandomInt(0, MAX_GIMMICKS - 1))
     {
         case(GIMMICK_MELEE):
         {
@@ -125,14 +133,14 @@ public StartNearMapEnd()
 
         case(GIMMICK_JETPACK):
         {
-            PrintCenterTextAll("STEAM POWERED JETPACKS ENABLED");
+            PrintCenterTextAll("STEAM POWERED JETPACKS ENABLED (hold jump)");
             ServerCommand("sm_jetpack 1");
             LogMessage("Started jetpacks");//TODO
         }
 
         case(GIMMICK_SUPER_KICK):
         {
-            PrintCenterTextAll("SUPER KICKS ENABLED");
+            PrintCenterTextAll("SUPER KICKS ENABLED (kick people)");
             ServerCommand("sm_super_kick 1");
             LogMessage("Started super kick");//TODO
         }
