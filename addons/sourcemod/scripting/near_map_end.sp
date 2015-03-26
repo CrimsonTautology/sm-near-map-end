@@ -11,6 +11,15 @@ new Handle:g_Cvar_Enabled = INVALID_HANDLE;
 new Handle:g_Cvar_NearMapEndTime = INVALID_HANDLE;
 new bool:g_InNearMapEnd = false;
 
+#define MAX_GIMMICKS		4
+enum gimmicks
+{
+    GIMMICK_MELEE = 0,
+    GIMMICK_JETPACK,
+    GIMMICK_SUPER_KICK,
+    GIMMICK_TINY
+}
+
 public Plugin:myinfo =
 {
     name = PLUGIN_NAME,
@@ -82,12 +91,7 @@ bool:InNearMapEnd()
     return g_InNearMapEnd;
 }
 
-ResetNearMapEnd()
-{
-    g_InNearMapEnd = false;
-}
-
-public Action:Timer_Repeat( Handle:hTimer, any:iUserID )
+public Action:Timer_Repeat( Handle:timer, any:player )
 {
     if(!IsNearMapEndEnabled()) return Plugin_Handled;
     if(InNearMapEnd()) return Plugin_Handled;
@@ -107,9 +111,44 @@ public Action:Timer_Repeat( Handle:hTimer, any:iUserID )
 
 public StartNearMapEnd()
 {
-    PrintCenterTextAll("IT'S A FISTFIGHT TIME!");
-
     new pitch = GetRandomInt(85, 110);
+
+
+    switch(GetRandomInt(0, MAX_GIMMICKS))
+    {
+        case(GIMMICK_MELEE):
+        {
+            PrintCenterTextAll("IT'S A FISTFIGHT TIME!");
+            ServerCommand("fof_melee_only 1");
+            LogMessage("Started melee only");//TODO
+        }
+
+        case(GIMMICK_JETPACK):
+        {
+            PrintCenterTextAll("STEAM POWERED JETPACKS ENABLED");
+            ServerCommand("sm_jetpack 1");
+            LogMessage("Started jetpacks");//TODO
+        }
+
+        case(GIMMICK_SUPER_KICK):
+        {
+            PrintCenterTextAll("SUPER KICKS ENABLED");
+            ServerCommand("sm_super_kick 1");
+            LogMessage("Started super kick");//TODO
+        }
+
+        case(GIMMICK_TINY):
+        {
+            PrintCenterTextAll("TINY MODE");
+            ServerCommand("sm_resize_enabled 1");
+            ServerCommand("sm_resize_joinstatus 1");
+            ServerCommand("sm_resize @all");
+            pitch = 30;
+            LogMessage("Started tiny mode");//TODO
+        }
+    }
+    
+
     for (new client=1; client <= MaxClients; client++)
     {
         if(!IsClientInGame(client)) continue;
