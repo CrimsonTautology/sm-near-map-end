@@ -7,22 +7,12 @@
 #define PLUGIN_VERSION		"1.0.0"
 #define PLUGIN_NAME         "[FoF] Near Map End Gimmicks"
 
-#if !defined IN_FOF_KICK
-#define IN_FOF_KICK		(1<<17)
-#endif
-#if !defined IN_FOF_DROP
-#define IN_FOF_DROP		(1<<19)
-#endif
-
-new Handle:sm_fof_melee_version = INVALID_HANDLE;
-new Handle:fof_melee_only = INVALID_HANDLE;
-new Handle:fof_melee_only_near_map_end = INVALID_HANDLE;
-new Handle:fof_melee_only_kicks = INVALID_HANDLE;
+new Handle:g_Cvar_Enabled = INVALID_HANDLE;
+new Handle:g_Cvar_NearMapEndTime = INVALID_HANDLE;
 new Handle:mp_teamplay = INVALID_HANDLE;
 new Handle:fof_sv_maxteams = INVALID_HANDLE;
-new bool:bMeleeOnly = false;
-new nKicksMode = 0;
-new iAutoFF_timeleft = 0;
+new g_NearMapEndTime = 0;
+new bool:g_InNearMapEndTime = false;
 new bool:bAutoFF = false;
 new bool:bTeamPlay = false;
 new nMaxTeams = 2;
@@ -38,14 +28,25 @@ public Plugin:myinfo =
 
 public OnPluginStart()
 {
-    CreateConVar("sm_jetpack_version", PLUGIN_VERSION, PLUGIN_NAME, FCVAR_PLUGIN | FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
-    sm_fof_melee_version = CreateConVar( "sm_fof_melee_version", PLUGIN_VERSION, "FoF Fistfight Plugin Version", FCVAR_PLUGIN|FCVAR_NOTIFY|FCVAR_REPLICATED|FCVAR_SPONLY|FCVAR_DONTRECORD );
-    SetConVarString( sm_fof_melee_version, PLUGIN_VERSION, true, true );
-    HookConVarChange( sm_fof_melee_version, OnVerionCVarChanged );
+    CreateConVar( "sm_near_map_end_version", PLUGIN_VERSION, PLUGIN_NAME, FCVAR_PLUGIN | FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
+    g_Cvar_Enabled = CreateConVar(
+            "sm_near_map_end",
+            "1",
+            "Set to 1 to enable the near map end plugin",
+            FCVAR_PLUGIN | FCVAR_REPLICATED | FCVAR_NOTIFY,
+            true,
+            0.0,
+            true,
+            1.0);
+    HookConVarChange(g_Cvar_Enabled, OnEnabledChange);
 
-    HookConVarChange( ( fof_melee_only = CreateConVar( "fof_melee_only", "0", _, FCVAR_PLUGIN|FCVAR_NOTIFY, true, 0.0, true, 1.0 ) ), OnCVarChanged );
-    HookConVarChange( ( fof_melee_only_near_map_end = CreateConVar( "fof_melee_only_near_map_end", "0", "Enable melee-only near map end (in seconds).", FCVAR_PLUGIN, true, 0.0 ) ), OnCVarChanged );
-    HookConVarChange( ( fof_melee_only_kicks = CreateConVar( "fof_melee_only_kicks", "0", "0 - disable kicks, 1 - allow kicks, 2 - allow kicks but with no damage.", FCVAR_PLUGIN, true, 0.0, true, 2.0 ) ), OnCVarChanged );
+    g_Cvar_NearMapEndTime = CreateConVar(
+            "sm_near_map_end_time",
+            "60",
+            "Enable near map end at this time from end (in seconds)",
+            FCVAR_PLUGIN,
+            true,
+            0.0);
 
     AutoExecConfig();
 
@@ -62,138 +63,80 @@ public OnPluginStart()
 
 public OnMapStart()
 {
-    bTeamPlay = mp_teamplay != INVALID_HANDLE ? GetConVarBool( mp_teamplay ) : false;
-    nMaxTeams = fof_sv_maxteams != INVALID_HANDLE ? GetConVarInt( fof_sv_maxteams ) : 2;
+    g_InNearMapEndTime = false;
     CreateTimer( 1.0, Timer_Repeat, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE );
     PrecacheSound( "vehicles/train/whistle.wav", true );
 }
 
 public OnConfigsExecuted()
 {
-    bMeleeOnly = GetConVarBool( fof_melee_only );
-    iAutoFF_timeleft = GetConVarInt( fof_melee_only_near_map_end );
-    nKicksMode = GetConVarInt( fof_melee_only_kicks );
-    if( nKicksMode > 2 ) nKicksMode = 2; if( nKicksMode < 0 ) nKicksMode = 0;
-
-    if( !bMeleeOnly )
-        for( new iClient = 1; iClient <= MaxClients; iClient++ )
-            if( IsClientInGame( iClient ) )
-                Timer_PlayerSpawn( INVALID_HANDLE, GetClientUserId( iClient ) );
-
-    new String:szDescription[64];
-    if( bTeamPlay )
-        Format( szDescription, sizeof( szDescription ), "%d Team Fistfight", nMaxTeams );
-    else
-        strcopy( szDescription, sizeof( szDescription ), "Fistfight" );
+    g_NearMapEndTime = GetConVarInt(g_Cvar_NearMapEndTime);
 }
 
-    public OnVerionCVarChanged( Handle:hCVar, const String:szOldValue[], const String:szNewValue[] )
-if( strcmp( szNewValue, PLUGIN_VERSION, false ) )
-    SetConVarString( hCVar, PLUGIN_VERSION, true, true );
-public OnCVarChanged( Handle:hCVar, const String:szOldValue[], const String:szNewValue[] )
-    OnConfigsExecuted();
-
-public Action:OnPlayerTakeDamage( iVictim, &iAttacker, &iInflictor, &Float:flDamage, &iDmgType, &iWeapon, Float:vecDmgForce[3], Float:vecDmgPosition[3], iDmgCustom )
+public OnEnabledChange(Handle:cvar, const String:oldValue[], const String:newValue[])
 {
-    if( ( bMeleeOnly || bAutoFF ) && nKicksMode == 2 && iDmgCustom == 11 )
+    if(cvar != g_Cvar_Enabled) return;
+
+    new bool:was_on = !!StringToInt(oldValue);
+    new bool:now_on = !!StringToInt(newValue);
+
+    //When changing from on to off
+    if(was_on && !now_on)
     {
-        flDamage = 0.0;
-        return Plugin_Changed;
     }
-    return Plugin_Continue;
+
+    //When changing from off to on
+    if(!was_on && now_on)
+    {
+    }
 }
 
-public Event_PlayerActivate( Handle:hEvent, const String:szEventName[], bool:bDontBroadcast )
+bool:IsNearMapEndEnabled()
 {
-    new iClient = GetClientOfUserId( GetEventInt( hEvent, "userid" ) );
-    if( 0 < iClient <= MaxClients && IsClientInGame( iClient ) )
-        SDKHook( iClient, SDKHook_OnTakeDamage, OnPlayerTakeDamage );
+    return GetConVarBool(g_Cvar_Enabled);
 }
-
-    public Event_PlayerSpawn( Handle:hEvent, const String:szEventName[], bool:bDontBroadcast )
-if( bMeleeOnly || bAutoFF )
-    CreateTimer( 0.0, Timer_PlayerSpawn, GetEventInt( hEvent, "userid" ), TIMER_FLAG_NO_MAPCHANGE );
 
 public Action:Timer_Repeat( Handle:hTimer, any:iUserID )
 {
-    new iTimeleft, bool:bAutoFF_new;
-    bAutoFF_new = iAutoFF_timeleft > 0 && GetMapTimeLeft( iTimeleft ) && iTimeleft > 0 && iTimeleft <= iAutoFF_timeleft;
-    if( bAutoFF != bAutoFF_new && bAutoFF_new && !bMeleeOnly )
+    new time_left, bool:bAutoFF_new;
+    GetMapTimeLeft(time_left);
+    bAutoFF_new = g_NearMapEndTime > 0 && time_left > 0 && time_left <= g_NearMapEndTime;
+    if( bAutoFF != bAutoFF_new && bAutoFF_new)
     {
-        PrintCenterTextAll( "IT'S A FISTFIGHT TIME!" );
-
-        new iPitch = GetRandomInt( 85, 110 );
-        for( new iClient = 1; iClient <= MaxClients; iClient++ )
-            if( IsClientInGame( iClient ) )
-            {
-                CreateTimer( GetRandomFloat( 0.0, 2.0 ), Timer_PlayerTaunt, GetClientUserId( iClient ) );
-                EmitSoundToClient( iClient, "vehicles/train/whistle.wav", .flags = SND_CHANGEPITCH, .pitch = iPitch );
-            }
+        StartNearMapEnd();
     }
     bAutoFF = bAutoFF_new;
     return Plugin_Handled;
 }
 
-public Action:Timer_PlayerTaunt( Handle:hTimer, any:iUserID )
+public StartNearMapEnd()
 {
-    new iClient = GetClientOfUserId( iUserID );
-    if( 0 < iClient <= MaxClients && IsClientInGame( iClient ) )
-        FakeClientCommand( iClient, "vc 8 3" );
-    return Plugin_Stop;
-}
+    PrintCenterTextAll("IT'S A FISTFIGHT TIME!");
 
-public Action:Timer_PlayerSpawn( Handle:hTimer, any:iUserID )
-{
-    new iClient = GetClientOfUserId( iUserID );
-    if( iClient <= 0 || iClient > MaxClients || !IsClientInGame( iClient ) || !IsPlayerAlive( iClient ) )
-        return Plugin_Stop;
-
-    ClientCommand( iClient, "use weapon_fists" );
-
-    return Plugin_Stop;
-}
-
-public Action:OnPlayerRunCmd( iClient, &iButtons, &iImpulse, Float:vecVelocity[3], Float:vecAngles[3], &iNewWeapon, &iSubType, &nCommand, &iTick, &iSeed, iMouse[2] )
-{
-    if( ( bMeleeOnly || bAutoFF ) && 0 < iClient <= MaxClients && IsClientInGame( iClient ) && IsPlayerAlive( iClient ) )
+    new pitch = GetRandomInt(85, 110);
+    for (new client=1; client <= MaxClients; client++)
     {
-        new String:szClassname[16], iWeapon[2], bool:bFists = false, bool:bMelee = false, iNewButtons = iButtons;
+        if(!IsClientInGame(client)) continue;
 
-        iWeapon[0] = GetEntPropEnt( iClient, Prop_Send, "m_hActiveWeapon" );
-        iWeapon[1] = GetEntPropEnt( iClient, Prop_Send, "m_hActiveWeapon2" );
-        for( new w = 0; w < sizeof( iWeapon ); w++ )
-            if( iWeapon[w] > 0 && IsValidEdict( iWeapon[w] ) )
-            {
-                GetEntityClassname( iWeapon[w], szClassname, sizeof( szClassname ) );
-                bFists = StrEqual( szClassname, "weapon_fists" );
-                bMelee = ( bFists || StrEqual( szClassname, "weapon_knife" ) && CheckCommandAccess( iClient, "meleeonly_knives", ADMFLAG_GENERIC, true ) || StrEqual( szClassname, "weapon_axe" ) && CheckCommandAccess( iClient, "meleeonly_axes", ADMFLAG_BAN, true ) );
-                if( !bMelee )
-                {
-                    if( IsFakeClient( iClient ) )
-                        FakeClientCommand( iClient, "use weapon_fists" );
-                    else
-                        ClientCommand( iClient, "use weapon_fists" );
-                }
-            }
-
-        if( !bMelee && ( iButtons & IN_ATTACK ) )
-            iNewButtons |= ~IN_ATTACK;
-        if( !CheckCommandAccess( iClient, "meleeonly_throw", ADMFLAG_SLAY, true ) )
-        {
-            if( !bFists && ( iButtons & IN_ATTACK2 ) )
-                iNewButtons |= ~IN_ATTACK2;
-            if( iButtons & IN_FOF_DROP )
-                iNewButtons |= ~IN_FOF_DROP;
-        }
-        if( nKicksMode == 0 && ( iButtons & IN_FOF_KICK ) )
-            iNewButtons |= ~IN_FOF_KICK;
-
-        if( iNewButtons != iButtons )
-        {
-            iButtons = iNewButtons;
-            return Plugin_Changed;
-        }
+        CreateTimer(GetRandomFloat( 0.0, 2.0 ), Timer_PlayerTaunt, GetClientUserId(client));
+        EmitSoundToClient(client, "vehicles/train/whistle.wav", .flags = SND_CHANGEPITCH, .pitch = pitch );
     }
-    return Plugin_Continue;
 }
 
+public Action:Timer_PlayerTaunt( Handle:timer, any:player )
+{
+    new client = GetClientOfUserId(player);
+
+    if(client <= 0) return Plugin_Stop;
+    if(!IsClientInGame(client)) return Plugin_Stop;
+    if(!IsPlayerAlive(client)) return Plugin_Stop;
+
+    ForceTaunt(client);
+
+    return Plugin_Stop;
+}
+
+public ForceTaunt(client)
+{
+    FakeClientCommand(client, "vc 8 3");
+}
