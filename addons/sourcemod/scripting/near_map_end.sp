@@ -9,13 +9,7 @@
 
 new Handle:g_Cvar_Enabled = INVALID_HANDLE;
 new Handle:g_Cvar_NearMapEndTime = INVALID_HANDLE;
-new Handle:mp_teamplay = INVALID_HANDLE;
-new Handle:fof_sv_maxteams = INVALID_HANDLE;
-new g_NearMapEndTime = 0;
-new bool:g_InNearMapEndTime = false;
-new bool:bAutoFF = false;
-new bool:bTeamPlay = false;
-new nMaxTeams = 2;
+new bool:g_InNearMapEnd = false;
 
 public Plugin:myinfo =
 {
@@ -49,28 +43,13 @@ public OnPluginStart()
             0.0);
 
     AutoExecConfig();
-
-    mp_teamplay = FindConVar( "mp_teamplay" );
-    fof_sv_maxteams = FindConVar( "fof_sv_maxteams" );
-
-    HookEvent( "player_activate", Event_PlayerActivate );
-    HookEvent( "player_spawn", Event_PlayerSpawn );
-
-    for( new iClient = 1; iClient <= MaxClients; iClient++ )
-        if( IsClientConnected( iClient ) )
-            SDKHook( iClient, SDKHook_OnTakeDamage, OnPlayerTakeDamage );
 }
 
 public OnMapStart()
 {
-    g_InNearMapEndTime = false;
+    g_InNearMapEnd = false;
     CreateTimer( 1.0, Timer_Repeat, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE );
     PrecacheSound( "vehicles/train/whistle.wav", true );
-}
-
-public OnConfigsExecuted()
-{
-    g_NearMapEndTime = GetConVarInt(g_Cvar_NearMapEndTime);
 }
 
 public OnEnabledChange(Handle:cvar, const String:oldValue[], const String:newValue[])
@@ -80,6 +59,7 @@ public OnEnabledChange(Handle:cvar, const String:oldValue[], const String:newVal
     new bool:was_on = !!StringToInt(oldValue);
     new bool:now_on = !!StringToInt(newValue);
 
+    /*
     //When changing from on to off
     if(was_on && !now_on)
     {
@@ -89,23 +69,39 @@ public OnEnabledChange(Handle:cvar, const String:oldValue[], const String:newVal
     if(!was_on && now_on)
     {
     }
+    */
 }
 
 bool:IsNearMapEndEnabled()
 {
-    return GetConVarBool(g_Cvar_Enabled);
+    return GetConVarBool(g_Cvar_Enabled) &&  GetConVarInt(g_Cvar_NearMapEndTime) > 0;
+}
+
+bool:InNearMapEnd()
+{
+    return g_InNearMapEnd;
+}
+
+ResetNearMapEnd()
+{
+    g_InNearMapEnd = false;
 }
 
 public Action:Timer_Repeat( Handle:hTimer, any:iUserID )
 {
-    new time_left, bool:bAutoFF_new;
+    if(!IsNearMapEndEnabled()) return Plugin_Handled;
+    if(InNearMapEnd()) return Plugin_Handled;
+
+    new time_left, near_map_end_time;
     GetMapTimeLeft(time_left);
-    bAutoFF_new = g_NearMapEndTime > 0 && time_left > 0 && time_left <= g_NearMapEndTime;
-    if( bAutoFF != bAutoFF_new && bAutoFF_new)
+    near_map_end_time = GetConVarInt(g_Cvar_NearMapEndTime);
+    
+    if(time_left > 0 && time_left <= near_map_end_time)
     {
+        g_InNearMapEnd = true;
         StartNearMapEnd();
     }
-    bAutoFF = bAutoFF_new;
+
     return Plugin_Handled;
 }
 
