@@ -41,8 +41,6 @@ public OnPluginStart()
             0.0,
             true,
             1.0);
-    HookConVarChange(g_Cvar_Enabled, OnEnabledChange);
-
     g_Cvar_NearMapEndTime = CreateConVar(
             "sm_near_map_end_time",
             "60",
@@ -59,26 +57,6 @@ public OnMapStart()
     g_InNearMapEnd = false;
     CreateTimer( 1.0, Timer_Repeat, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE );
     PrecacheSound( "vehicles/train/whistle.wav", true );
-}
-
-public OnEnabledChange(Handle:cvar, const String:oldValue[], const String:newValue[])
-{
-    if(cvar != g_Cvar_Enabled) return;
-
-    new bool:was_on = !!StringToInt(oldValue);
-    new bool:now_on = !!StringToInt(newValue);
-
-    /*
-    //When changing from on to off
-    if(was_on && !now_on)
-    {
-    }
-
-    //When changing from off to on
-    if(!was_on && now_on)
-    {
-    }
-    */
 }
 
 bool:IsNearMapEndEnabled()
