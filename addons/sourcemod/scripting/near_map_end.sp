@@ -104,7 +104,6 @@ public Action:Timer_Repeat( Handle:timer, any:player )
     
     if(time_left > 0 && time_left <= near_map_end_time)
     {
-        LogMessage("Near the end of the map");//TODO
         g_InNearMapEnd = true;
         StartNearMapEnd();
     }
@@ -151,7 +150,7 @@ public StartNearMapEnd()
             ServerCommand("sm_resize_enabled 1");
             ServerCommand("sm_resize_joinstatus 1");
             ServerCommand("sm_resize @all");
-            pitch = 30;
+            pitch = 175;
             LogMessage("Started tiny mode");//TODO
         }
     }
