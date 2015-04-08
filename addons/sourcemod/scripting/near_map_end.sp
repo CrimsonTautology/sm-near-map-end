@@ -11,13 +11,18 @@ new Handle:g_Cvar_Enabled = INVALID_HANDLE;
 new Handle:g_Cvar_NearMapEndTime = INVALID_HANDLE;
 new bool:g_InNearMapEnd = false;
 
-#define MAX_GIMMICKS		4
+#define MAX_GIMMICKS		9
 enum gimmicks
 {
     GIMMICK_MELEE = 0,
     GIMMICK_JETPACK,
     GIMMICK_SUPER_KICK,
-    GIMMICK_TINY
+    GIMMICK_TINY,
+    GIMMICK_SNIPER,
+    GIMMICK_SHOTGUN,
+    GIMMICK_WALKER,
+    GIMMICK_BOW,
+    GIMMICK_DYNAMITE
 }
 
 public Plugin:myinfo =
@@ -101,25 +106,18 @@ public StartNearMapEnd()
     //Get random gimmick
     switch(GetRandomInt(0, MAX_GIMMICKS - 1))
     {
-        case(GIMMICK_MELEE):
-        {
-            PrintCenterTextAll("IT'S A FISTFIGHT TIME!");
-            ServerCommand("fof_melee_only 1");
-            LogMessage("Started melee only");//TODO
-        }
-
         case(GIMMICK_JETPACK):
         {
             PrintCenterTextAll("STEAM POWERED JETPACKS ENABLED (hold jump)");
             ServerCommand("sm_jetpack 1");
-            LogMessage("Started jetpacks");//TODO
+            LogMessage("Started jetpacks");
         }
 
         case(GIMMICK_SUPER_KICK):
         {
             PrintCenterTextAll("SUPER KICKS ENABLED (kick people)");
             ServerCommand("sm_super_kick 1");
-            LogMessage("Started super kick");//TODO
+            LogMessage("Started super kick");
         }
 
         case(GIMMICK_TINY):
@@ -129,8 +127,57 @@ public StartNearMapEnd()
             ServerCommand("sm_resize_joinstatus 1");
             ServerCommand("sm_resize @all");
             pitch = 175;
-            LogMessage("Started tiny mode");//TODO
+            LogMessage("Started tiny mode");
         }
+
+        case(GIMMICK_MELEE):
+        {
+            PrintCenterTextAll("IT'S A FISTFIGHT TIME!");
+            ServerCommand("sm_weapon_only 1");
+            ServerCommand("sm_weapon_only_weapon weapon_fists");
+            LogMessage("Started melee only mode");
+        }
+
+        case(GIMMICK_SNIPER):
+        {
+            PrintCenterTextAll("How good a shot are you?");
+            ServerCommand("sm_weapon_only 1");
+            ServerCommand("sm_weapon_only_weapon weapon_sharps");
+            LogMessage("Started sniper mode");
+        }
+
+        case(GIMMICK_WALKER):
+        {
+            PrintCenterTextAll("Is the Walker OP?");
+            ServerCommand("sm_weapon_only 1");
+            ServerCommand("sm_weapon_only_weapon weapon_walker");
+            LogMessage("Started walker mode");
+        }
+
+        case(GIMMICK_DYNAMITE):
+        {
+            PrintCenterTextAll("DYNAMITE ONLY");
+            ServerCommand("sm_weapon_only 1");
+            ServerCommand("sm_weapon_only_weapon weapon_dynamite_black");
+            LogMessage("Started dynamite mode");
+        }
+
+        case(GIMMICK_BOW):
+        {
+            PrintCenterTextAll("Here come the Indians");
+            ServerCommand("sm_weapon_only 1");
+            ServerCommand("sm_weapon_only_weapon weapon_bow");
+            LogMessage("Started bow and arrow mode");
+        }
+
+        case(GIMMICK_SHOTGUN):
+        {
+            PrintCenterTextAll("RUN AND GUN");
+            ServerCommand("sm_weapon_only 1");
+            ServerCommand("sm_weapon_only_weapon weapon_shotgun");
+            LogMessage("Started shotgun mode");
+        }
+
     }
     
 
