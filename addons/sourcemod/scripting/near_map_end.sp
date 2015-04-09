@@ -74,7 +74,7 @@ bool:InNearMapEnd()
     return g_InNearMapEnd;
 }
 
-public Action:Timer_Repeat( Handle:timer, any:player )
+public Action:Timer_Repeat(Handle:timer)
 {
     if(!IsNearMapEndEnabled()) return Plugin_Handled;
     if(InNearMapEnd()) return Plugin_Handled;
