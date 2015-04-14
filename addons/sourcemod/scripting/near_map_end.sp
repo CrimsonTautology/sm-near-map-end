@@ -11,7 +11,7 @@ new Handle:g_Cvar_Enabled = INVALID_HANDLE;
 new Handle:g_Cvar_NearMapEndTime = INVALID_HANDLE;
 new bool:g_InNearMapEnd = false;
 
-#define MAX_GIMMICKS		9
+#define MAX_GIMMICKS		10
 enum gimmicks
 {
     GIMMICK_MELEE = 0,
@@ -22,7 +22,8 @@ enum gimmicks
     GIMMICK_SHOTGUN,
     GIMMICK_WALKER,
     GIMMICK_BOW,
-    GIMMICK_DYNAMITE
+    GIMMICK_DYNAMITE,
+    GIMMICK_DERINGER
 }
 
 public Plugin:myinfo =
@@ -132,15 +133,15 @@ public StartNearMapEnd()
 
         case(GIMMICK_MELEE):
         {
-            PrintCenterTextAll("IT'S A FISTFIGHT TIME!");
+            PrintCenterTextAll("HERE'S JOHNNY");
             ServerCommand("sm_weapon_only 1");
-            ServerCommand("sm_weapon_only_weapon weapon_fists");
+            ServerCommand("sm_weapon_only_weapon weapon_axe");
             LogMessage("Started melee only mode");
         }
 
         case(GIMMICK_SNIPER):
         {
-            PrintCenterTextAll("How good a shot are you?");
+            PrintCenterTextAll("SNIPER MODE");
             ServerCommand("sm_weapon_only 1");
             ServerCommand("sm_weapon_only_weapon weapon_sharps");
             LogMessage("Started sniper mode");
@@ -176,6 +177,14 @@ public StartNearMapEnd()
             ServerCommand("sm_weapon_only 1");
             ServerCommand("sm_weapon_only_weapon weapon_shotgun");
             LogMessage("Started shotgun mode");
+        }
+
+        case(GIMMICK_DERINGER):
+        {
+            PrintCenterTextAll("DERINGERS");
+            ServerCommand("sm_weapon_only 1");
+            ServerCommand("sm_weapon_only_weapon weapon_deringer");
+            LogMessage("Started deringer mode");
         }
 
     }
