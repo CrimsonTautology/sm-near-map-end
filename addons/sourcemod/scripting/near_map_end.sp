@@ -32,7 +32,7 @@ public Plugin:myinfo =
     author = "CrimsonTautology",
     description = "Choose a random gimmick near map end",
     version = PLUGIN_VERSION,
-    url = "https://github.com/CrimsonTautology/"
+    url = "https://github.com/CrimsonTautology/sm_near_map_end"
 };
 
 public OnPluginStart()
