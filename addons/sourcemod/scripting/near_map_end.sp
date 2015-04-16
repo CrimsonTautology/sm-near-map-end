@@ -134,56 +134,56 @@ public StartNearMapEnd()
         case(GIMMICK_MELEE):
         {
             PrintCenterTextAll("HERE'S JOHNNY");
-            ServerCommand("sm_weapon_only 1");
             ServerCommand("sm_weapon_only_weapon weapon_axe");
+            ServerCommand("sm_weapon_only 1");
             LogMessage("Started melee only mode");
         }
 
         case(GIMMICK_SNIPER):
         {
             PrintCenterTextAll("SNIPER MODE");
-            ServerCommand("sm_weapon_only 1");
             ServerCommand("sm_weapon_only_weapon weapon_sharps");
+            ServerCommand("sm_weapon_only 1");
             LogMessage("Started sniper mode");
         }
 
         case(GIMMICK_WALKER):
         {
             PrintCenterTextAll("Is the Walker OP?");
-            ServerCommand("sm_weapon_only 1");
             ServerCommand("sm_weapon_only_weapon weapon_walker");
+            ServerCommand("sm_weapon_only 1");
             LogMessage("Started walker mode");
         }
 
         case(GIMMICK_DYNAMITE):
         {
             PrintCenterTextAll("DYNAMITE ONLY");
-            ServerCommand("sm_weapon_only 1");
             ServerCommand("sm_weapon_only_weapon weapon_dynamite_black");
+            ServerCommand("sm_weapon_only 1");
             LogMessage("Started dynamite mode");
         }
 
         case(GIMMICK_BOW):
         {
             PrintCenterTextAll("Here come the Indians");
-            ServerCommand("sm_weapon_only 1");
             ServerCommand("sm_weapon_only_weapon weapon_bow");
+            ServerCommand("sm_weapon_only 1");
             LogMessage("Started bow and arrow mode");
         }
 
         case(GIMMICK_SHOTGUN):
         {
             PrintCenterTextAll("RUN AND GUN");
-            ServerCommand("sm_weapon_only 1");
             ServerCommand("sm_weapon_only_weapon weapon_shotgun");
+            ServerCommand("sm_weapon_only 1");
             LogMessage("Started shotgun mode");
         }
 
         case(GIMMICK_DERINGER):
         {
             PrintCenterTextAll("DERINGERS");
-            ServerCommand("sm_weapon_only 1");
             ServerCommand("sm_weapon_only_weapon weapon_deringer");
+            ServerCommand("sm_weapon_only 1");
             LogMessage("Started deringer mode");
         }
 
