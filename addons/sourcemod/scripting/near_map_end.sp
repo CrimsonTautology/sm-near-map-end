@@ -11,7 +11,7 @@ new Handle:g_Cvar_Enabled = INVALID_HANDLE;
 new Handle:g_Cvar_NearMapEndTime = INVALID_HANDLE;
 new bool:g_InNearMapEnd = false;
 
-#define MAX_GIMMICKS		10
+#define MAX_GIMMICKS		13
 enum gimmicks
 {
     GIMMICK_MELEE = 0,
@@ -23,7 +23,10 @@ enum gimmicks
     GIMMICK_WALKER,
     GIMMICK_BOW,
     GIMMICK_DYNAMITE,
-    GIMMICK_DERINGER
+    GIMMICK_DERINGER,
+    GIMMICK_GHOSTS,
+    GIMMICK_SKULLS,
+    GIMMICK_WHISKEY
 }
 
 public Plugin:myinfo =
@@ -184,6 +187,36 @@ public StartNearMapEnd()
             PrintCenterTextAll("DERINGERS");
             ServerCommand("sm_weapon_only_weapon weapon_deringer");
             ServerCommand("sm_weapon_only 1");
+            LogMessage("Started deringer mode");
+        }
+
+        case(GIMMICK_GHOSTS):
+        {
+            PrintCenterTextAll("G-G-Ghosts!");
+            ServerCommand("sm_death_chance_class fof_ghost");
+            ServerCommand("sm_death_chance_percentage 0.25");
+            ServerCommand("sm_death_chance_ammount 1");
+            ServerCommand("sm_death_chance 1");
+            LogMessage("Started deringer mode");
+        }
+
+        case(GIMMICK_SKULLS):
+        {
+            PrintCenterTextAll("Bonus Skulls");
+            ServerCommand("sm_death_chance_class item_golden_skull");
+            ServerCommand("sm_death_chance_percentage 1.0");
+            ServerCommand("sm_death_chance_ammount 1");
+            ServerCommand("sm_death_chance 1");
+            LogMessage("Started deringer mode");
+        }
+
+        case(GIMMICK_WHISKEY):
+        {
+            PrintCenterTextAll("Pass the Whiskey");
+            ServerCommand("sm_death_chance_class item_whiskey");
+            ServerCommand("sm_death_chance_percentage 1.0");
+            ServerCommand("sm_death_chance_ammount 1");
+            ServerCommand("sm_death_chance 1");
             LogMessage("Started deringer mode");
         }
 
