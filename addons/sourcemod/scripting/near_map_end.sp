@@ -197,7 +197,7 @@ public StartNearMapEnd()
             ServerCommand("sm_death_chance_percentage 0.25");
             ServerCommand("sm_death_chance_ammount 1");
             ServerCommand("sm_death_chance 1");
-            LogMessage("Started deringer mode");
+            LogMessage("Started ghosts mode");
         }
 
         case(GIMMICK_SKULLS):
@@ -207,7 +207,7 @@ public StartNearMapEnd()
             ServerCommand("sm_death_chance_percentage 1.0");
             ServerCommand("sm_death_chance_ammount 1");
             ServerCommand("sm_death_chance 1");
-            LogMessage("Started deringer mode");
+            LogMessage("Started skulls mode");
         }
 
         case(GIMMICK_WHISKEY):
@@ -217,7 +217,7 @@ public StartNearMapEnd()
             ServerCommand("sm_death_chance_percentage 1.0");
             ServerCommand("sm_death_chance_ammount 1");
             ServerCommand("sm_death_chance 1");
-            LogMessage("Started deringer mode");
+            LogMessage("Started whiskey mode");
         }
 
     }
