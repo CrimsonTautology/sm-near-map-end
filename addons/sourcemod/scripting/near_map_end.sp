@@ -87,8 +87,6 @@ public Action:Timer_Repeat(Handle:timer)
     GetMapTimeLeft(time_left);
     near_map_end_time = GetConVarInt(g_Cvar_NearMapEndTime);
 
-    //LogMessage("HIT %d", time_left);//TODO
-    
     if(time_left > 0 && time_left <= near_map_end_time)
     {
         g_InNearMapEnd = true;
