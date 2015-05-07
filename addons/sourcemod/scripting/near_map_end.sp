@@ -65,7 +65,7 @@ public OnMapStart()
 {
     g_InNearMapEnd = false;
     CreateTimer( 1.0, Timer_Repeat, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE );
-    PrecacheSound( "halloween/witch_laugh.wav", true );
+    PrecacheSound( "vehicles/train/whistle.wav", true );
 }
 
 bool:IsNearMapEndEnabled()
