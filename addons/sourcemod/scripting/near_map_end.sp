@@ -25,8 +25,6 @@ enum gimmicks
     GIMMICK_DYNAMITE,
     GIMMICK_DERINGER,
     GIMMICK_GHOSTS,
-    GIMMICK_SKULLS,
-    GIMMICK_WHISKEY
 }
 
 public Plugin:myinfo =
@@ -196,26 +194,6 @@ public StartNearMapEnd()
             ServerCommand("sm_death_chance_ammount 1");
             ServerCommand("sm_death_chance 1");
             LogMessage("Started ghosts mode");
-        }
-
-        case(GIMMICK_SKULLS):
-        {
-            PrintCenterTextAll("Bonus Skulls");
-            ServerCommand("sm_death_chance_class item_golden_skull");
-            ServerCommand("sm_death_chance_percentage 1.0");
-            ServerCommand("sm_death_chance_ammount 1");
-            ServerCommand("sm_death_chance 1");
-            LogMessage("Started skulls mode");
-        }
-
-        case(GIMMICK_WHISKEY):
-        {
-            PrintCenterTextAll("Pass the Whiskey");
-            ServerCommand("sm_death_chance_class item_whiskey");
-            ServerCommand("sm_death_chance_percentage 1.0");
-            ServerCommand("sm_death_chance_ammount 1");
-            ServerCommand("sm_death_chance 1");
-            LogMessage("Started whiskey mode");
         }
 
     }
