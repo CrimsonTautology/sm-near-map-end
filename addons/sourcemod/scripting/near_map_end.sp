@@ -11,7 +11,7 @@ new Handle:g_Cvar_Enabled = INVALID_HANDLE;
 new Handle:g_Cvar_NearMapEndTime = INVALID_HANDLE;
 new bool:g_InNearMapEnd = false;
 
-#define MAX_GIMMICKS		13
+#define MAX_GIMMICKS		11
 enum gimmicks
 {
     GIMMICK_MELEE = 0,
