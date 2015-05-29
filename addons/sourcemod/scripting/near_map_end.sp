@@ -101,7 +101,6 @@ public StartNearMapEnd()
     //Set some end of map settings
     ServerCommand("fof_sv_item_respawn_time 1.0");
     ServerCommand("fof_sv_wcrate_regentime 1.0");
-    ServerCommand("mp_disable_respawn_times 1"); //Does this do anything?
 
     //Get random gimmick
     switch(GetRandomInt(0, MAX_GIMMICKS - 1))
