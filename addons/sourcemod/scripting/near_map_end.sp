@@ -11,7 +11,7 @@ new Handle:g_Cvar_Enabled = INVALID_HANDLE;
 new Handle:g_Cvar_NearMapEndTime = INVALID_HANDLE;
 new bool:g_InNearMapEnd = false;
 
-#define MAX_GIMMICKS		12
+#define MAX_GIMMICKS		15
 enum gimmicks
 {
     GIMMICK_AXE = 0,
@@ -25,7 +25,10 @@ enum gimmicks
     GIMMICK_BOW,
     GIMMICK_DYNAMITE,
     GIMMICK_DERINGER,
+    GIMMICK_VOLCANIC,
+    GIMMICK_PEACEMAKER,
     GIMMICK_GHOSTS,
+    GIMMICK_HORSES,
 }
 
 public Plugin:myinfo =
@@ -194,6 +197,22 @@ public StartNearMapEnd()
             LogMessage("Started deringer mode");
         }
 
+        case(GIMMICK_VOLCANIC):
+        {
+            PrintCenterTextAll("VOLCANO");
+            ServerCommand("sm_weapon_only_weapon weapon_volcanic");
+            ServerCommand("sm_weapon_only 1");
+            LogMessage("Started volcanic mode");
+        }
+
+        case(GIMMICK_PEACEMAKER):
+        {
+            PrintCenterTextAll("This is the greatest handgun ever made");
+            ServerCommand("sm_weapon_only_weapon weapon_peacemaker");
+            ServerCommand("sm_weapon_only 1");
+            LogMessage("Started peacemaker mode");
+        }
+
         case(GIMMICK_GHOSTS):
         {
             PrintCenterTextAll("G-G-Ghosts!");
@@ -202,6 +221,16 @@ public StartNearMapEnd()
             ServerCommand("sm_death_chance_ammount 1");
             ServerCommand("sm_death_chance 1");
             LogMessage("Started ghosts mode");
+        }
+
+        case(GIMMICK_HORSES):
+        {
+            PrintCenterTextAll("A horse, of course.");
+            ServerCommand("sm_death_chance_class npc_horse");
+            ServerCommand("sm_death_chance_percentage 0.25");
+            ServerCommand("sm_death_chance_ammount 1");
+            ServerCommand("sm_death_chance 1");
+            LogMessage("Started horses mode");
         }
 
     }
