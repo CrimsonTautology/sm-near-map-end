@@ -11,10 +11,11 @@ new Handle:g_Cvar_Enabled = INVALID_HANDLE;
 new Handle:g_Cvar_NearMapEndTime = INVALID_HANDLE;
 new bool:g_InNearMapEnd = false;
 
-#define MAX_GIMMICKS		11
+#define MAX_GIMMICKS		12
 enum gimmicks
 {
-    GIMMICK_MELEE = 0,
+    GIMMICK_AXE = 0,
+    GIMMICK_MACHETE,
     GIMMICK_JETPACK,
     GIMMICK_SUPER_KICK,
     GIMMICK_TINY,
@@ -129,12 +130,20 @@ public StartNearMapEnd()
             LogMessage("Started tiny mode");
         }
 
-        case(GIMMICK_MELEE):
+        case(GIMMICK_AXE):
         {
             PrintCenterTextAll("HERE'S JOHNNY");
             ServerCommand("sm_weapon_only_weapon weapon_axe");
             ServerCommand("sm_weapon_only 1");
-            LogMessage("Started melee only mode");
+            LogMessage("Started axe only mode");
+        }
+
+        case(GIMMICK_MACHETE):
+        {
+            PrintCenterTextAll("CHOP CHOP CHOP");
+            ServerCommand("sm_weapon_only_weapon weapon_machete");
+            ServerCommand("sm_weapon_only 1");
+            LogMessage("Started machete only mode");
         }
 
         case(GIMMICK_SNIPER):
