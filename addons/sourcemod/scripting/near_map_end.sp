@@ -225,7 +225,7 @@ public StartNearMapEnd()
 
         case(GIMMICK_HORSES):
         {
-            PrintCenterTextAll("A horse, of course.");
+            PrintCenterTextAll("HORSE MODE: ACTIVE");
             ServerCommand("sm_death_chance_class npc_horse");
             ServerCommand("sm_death_chance_percentage 0.25");
             ServerCommand("sm_death_chance_ammount 1");
