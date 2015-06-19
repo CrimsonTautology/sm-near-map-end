@@ -11,7 +11,7 @@ new Handle:g_Cvar_Enabled = INVALID_HANDLE;
 new Handle:g_Cvar_NearMapEndTime = INVALID_HANDLE;
 new bool:g_InNearMapEnd = false;
 
-#define MAX_GIMMICKS		15
+#define MAX_GIMMICKS		16
 enum gimmicks
 {
     GIMMICK_AXE = 0,
@@ -29,6 +29,7 @@ enum gimmicks
     GIMMICK_PEACEMAKER,
     GIMMICK_GHOSTS,
     GIMMICK_HORSES,
+    GIMMICK_KABOOM,
 }
 
 public Plugin:myinfo =
@@ -231,6 +232,16 @@ public StartNearMapEnd()
             ServerCommand("sm_death_chance_ammount 1");
             ServerCommand("sm_death_chance 1");
             LogMessage("Started horses mode");
+        }
+
+        case(GIMMICK_KABOOM):
+        {
+            PrintCenterTextAll("KABOOM");
+            ServerCommand("sm_death_chance_class npc_handgrenade");
+            ServerCommand("sm_death_chance_percentage 1.0");
+            ServerCommand("sm_death_chance_ammount 1");
+            ServerCommand("sm_death_chance 1");
+            LogMessage("Started kaboom mode");
         }
 
     }
