@@ -144,7 +144,7 @@ public StartNearMapEnd()
 
         case(GIMMICK_MACHETE):
         {
-            PrintCenterTextAll("CHOP CHOP CHOP");
+            PrintCenterTextAll("HERE'S JASON");
             ServerCommand("sm_weapon_only_weapon weapon_machete");
             ServerCommand("sm_weapon_only 1");
             LogMessage("Started machete only mode");
