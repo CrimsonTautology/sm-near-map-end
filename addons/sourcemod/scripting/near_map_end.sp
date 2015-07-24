@@ -244,6 +244,11 @@ public StartNearMapEnd()
             LogMessage("Started kaboom mode");
         }
 
+        //ideas
+
+        //Land of chocolate
+        //sv_cheats 1; mat_fullbright 2; sv_cheats 0
+
     }
     
 
