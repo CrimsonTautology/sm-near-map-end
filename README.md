@@ -1,4 +1,5 @@
 # Near Map End
+[![Build Status](https://travis-ci.org/CrimsonTautology/sm_near_map_end.svg?branch=master)](https://travis-ci.org/CrimsonTautology/sm_near_map_end)
 
 Fistful of Frags plugin that enables a random gimmick near the maps end.
 
