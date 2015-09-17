@@ -10,7 +10,7 @@ new Handle:g_Cvar_Enabled = INVALID_HANDLE;
 new Handle:g_Cvar_NearMapEndTime = INVALID_HANDLE;
 new bool:g_InNearMapEnd = false;
 
-#define MAX_GIMMICKS		16
+#define MAX_GIMMICKS		21
 enum gimmicks
 {
     GIMMICK_AXE = 0,
@@ -29,6 +29,12 @@ enum gimmicks
     GIMMICK_GHOSTS,
     GIMMICK_HORSES,
     GIMMICK_KABOOM,
+
+    GIMMICK_MARESLEG,
+    GIMMICK_SAWEDOFF,
+    GIMMICK_COACHGUN,
+    GIMMICK_SMITH,
+    GIMMICK_HENRY,
 }
 
 public Plugin:myinfo =
@@ -241,6 +247,46 @@ public StartNearMapEnd()
             ServerCommand("sm_death_chance_ammount 1");
             ServerCommand("sm_death_chance 1");
             LogMessage("Started kaboom mode");
+        }
+
+        case(GIMMICK_MARESLEG):
+        {
+            PrintCenterTextAll("Everybody's favorite gun!");
+            ServerCommand("sm_weapon_only_weapon weapon_maresleg");
+            ServerCommand("sm_weapon_only 1");
+            LogMessage("Started mare's leg mode");
+        }
+
+        case(GIMMICK_SAWEDOFF):
+        {
+            PrintCenterTextAll("Sawed Off Mode");
+            ServerCommand("sm_weapon_only_weapon weapon_sawedoff_shotgun");
+            ServerCommand("sm_weapon_only 1");
+            LogMessage("Started sawedoff mode");
+        }
+
+        case(GIMMICK_COACHGUN):
+        {
+            PrintCenterTextAll("COACH");
+            ServerCommand("sm_weapon_only_weapon weapon_coachgun");
+            ServerCommand("sm_weapon_only 1");
+            LogMessage("Started coachgun mode");
+        }
+
+        case(GIMMICK_SMITH):
+        {
+            PrintCenterTextAll("SMITH");
+            ServerCommand("sm_weapon_only_weapon weapon_carbine");
+            ServerCommand("sm_weapon_only 1");
+            LogMessage("Started smith carbine mode");
+        }
+
+        case(GIMMICK_HENRY):
+        {
+            PrintCenterTextAll("HENRY");
+            ServerCommand("sm_weapon_only_weapon weapon_henryrifle");
+            ServerCommand("sm_weapon_only 1");
+            LogMessage("Started henry rifle mode");
         }
 
         //ideas
