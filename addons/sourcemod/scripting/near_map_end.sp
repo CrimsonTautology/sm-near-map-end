@@ -15,14 +15,14 @@ enum gimmicks
 {
     GIMMICK_AXE = 0,
     GIMMICK_MACHETE,
-    GIMMICK_JETPACK,
+    //GIMMICK_JETPACK,
     GIMMICK_SUPER_KICK,
     GIMMICK_TINY,
     GIMMICK_SNIPER,
     GIMMICK_SHOTGUN,
     GIMMICK_WALKER,
     GIMMICK_BOW,
-    GIMMICK_DYNAMITE,
+    //GIMMICK_DYNAMITE,
     GIMMICK_DERINGER,
     GIMMICK_VOLCANIC,
     GIMMICK_PEACEMAKER,
@@ -115,12 +115,14 @@ public StartNearMapEnd()
     //Get random gimmick
     switch(GetRandomInt(0, MAX_GIMMICKS - 1))
     {
+        /*
         case(GIMMICK_JETPACK):
         {
             PrintCenterTextAll("STEAM POWERED JETPACKS ENABLED (hold jump)");
             ServerCommand("sm_jetpack 1");
             LogMessage("Started jetpacks");
         }
+        */
 
         case(GIMMICK_SUPER_KICK):
         {
@@ -171,6 +173,7 @@ public StartNearMapEnd()
             LogMessage("Started walker mode");
         }
 
+        /*
         case(GIMMICK_DYNAMITE):
         {
             PrintCenterTextAll("DYNAMITE ONLY");
@@ -178,6 +181,7 @@ public StartNearMapEnd()
             ServerCommand("sm_weapon_only 1");
             LogMessage("Started dynamite mode");
         }
+        */
 
         case(GIMMICK_BOW):
         {
