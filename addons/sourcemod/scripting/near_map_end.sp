@@ -15,7 +15,7 @@ enum gimmicks
 {
     GIMMICK_AXE = 0,
     GIMMICK_MACHETE,
-    //GIMMICK_JETPACK,
+    GIMMICK_JETPACK,
     GIMMICK_SUPER_KICK,
     GIMMICK_TINY,
     GIMMICK_SNIPER,
@@ -115,14 +115,12 @@ public StartNearMapEnd()
     //Get random gimmick
     switch(GetRandomInt(0, MAX_GIMMICKS - 1))
     {
-        /*
         case(GIMMICK_JETPACK):
         {
             PrintCenterTextAll("STEAM POWERED JETPACKS ENABLED (hold jump)");
             ServerCommand("sm_jetpack 1");
             LogMessage("Started jetpacks");
         }
-        */
 
         case(GIMMICK_SUPER_KICK):
         {
