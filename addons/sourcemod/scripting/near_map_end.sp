@@ -35,6 +35,8 @@ enum gimmicks
     GIMMICK_COACHGUN,
     GIMMICK_SMITH,
     GIMMICK_HENRY,
+
+    GIMMICK_DRUNK,
 }
 
 public Plugin:myinfo =
@@ -290,6 +292,16 @@ public StartNearMapEnd()
             ServerCommand("sm_weapon_only 1");
             LogMessage("Started henry rifle mode");
         }
+
+        case(GIMMICK_DRUNK):
+        {
+            PrintCenterTextAll("Drunk Mode Active");
+            ServerCommand("sm_drunk_auto 1");
+            ServerCommand("sm_drunk @all");
+            pitch = 75;
+            LogMessage("Started drunk mode");
+        }
+
 
         //ideas
 
