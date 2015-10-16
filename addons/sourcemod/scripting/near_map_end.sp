@@ -10,7 +10,7 @@ new Handle:g_Cvar_Enabled = INVALID_HANDLE;
 new Handle:g_Cvar_NearMapEndTime = INVALID_HANDLE;
 new bool:g_InNearMapEnd = false;
 
-#define MAX_GIMMICKS		21
+#define MAX_GIMMICKS		23
 enum gimmicks
 {
     GIMMICK_AXE = 0,
@@ -37,6 +37,9 @@ enum gimmicks
     GIMMICK_HENRY,
 
     GIMMICK_DRUNK,
+
+    GIMMICK_WHISKEY,
+    GIMMICK_POTION,
 }
 
 public Plugin:myinfo =
@@ -300,6 +303,26 @@ public StartNearMapEnd()
             ServerCommand("sm_drunk @all");
             pitch = 75;
             LogMessage("Started drunk mode");
+        }
+
+        case(GIMMICK_WHISKEY):
+        {
+            PrintCenterTextAll("PASS THE WHISKEY");
+            ServerCommand("sm_death_chance_class item_whiskey");
+            ServerCommand("sm_death_chance_percentage 1.0");
+            ServerCommand("sm_death_chance_ammount 1");
+            ServerCommand("sm_death_chance 1");
+            LogMessage("Started whiskey mode");
+        }
+
+        case(GIMMICK_POTION):
+        {
+            PrintCenterTextAll("LEAKED HALLOWEEN EVENT MODE");
+            ServerCommand("sm_death_chance_class item_potion");
+            ServerCommand("sm_death_chance_percentage 1.0");
+            ServerCommand("sm_death_chance_ammount 1");
+            ServerCommand("sm_death_chance 1");
+            LogMessage("Started potion mode");
         }
 
 
