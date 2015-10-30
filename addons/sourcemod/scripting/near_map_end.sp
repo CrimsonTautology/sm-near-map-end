@@ -10,7 +10,7 @@ new Handle:g_Cvar_Enabled = INVALID_HANDLE;
 new Handle:g_Cvar_NearMapEndTime = INVALID_HANDLE;
 new bool:g_InNearMapEnd = false;
 
-#define MAX_GIMMICKS		23
+#define MAX_GIMMICKS		22
 enum gimmicks
 {
     GIMMICK_AXE = 0,
@@ -26,7 +26,7 @@ enum gimmicks
     GIMMICK_DERINGER,
     GIMMICK_VOLCANIC,
     GIMMICK_PEACEMAKER,
-    GIMMICK_GHOSTS,
+    //GIMMICK_GHOSTS,
     GIMMICK_HORSES,
     GIMMICK_KABOOM,
 
@@ -226,6 +226,8 @@ public StartNearMapEnd()
             LogMessage("Started peacemaker mode");
         }
 
+        /* 
+        //NOTE:  Due to a game change if you kill a ghost with dynamite the server will crash
         case(GIMMICK_GHOSTS):
         {
             PrintCenterTextAll("G-G-Ghosts!");
@@ -235,6 +237,7 @@ public StartNearMapEnd()
             ServerCommand("sm_death_chance 1");
             LogMessage("Started ghosts mode");
         }
+        */
 
         case(GIMMICK_HORSES):
         {
