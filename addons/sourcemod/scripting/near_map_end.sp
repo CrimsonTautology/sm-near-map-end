@@ -10,7 +10,7 @@ new Handle:g_Cvar_Enabled = INVALID_HANDLE;
 new Handle:g_Cvar_NearMapEndTime = INVALID_HANDLE;
 new bool:g_InNearMapEnd = false;
 
-#define MAX_GIMMICKS		22
+#define MAX_GIMMICKS		24
 enum gimmicks
 {
     GIMMICK_AXE = 0,
@@ -40,6 +40,9 @@ enum gimmicks
 
     GIMMICK_WHISKEY,
     GIMMICK_POTION,
+
+    GIMMICK_RPG,
+    GIMMICK_XBOW,
 }
 
 public Plugin:myinfo =
@@ -326,6 +329,22 @@ public StartNearMapEnd()
             ServerCommand("sm_death_chance_ammount 1");
             ServerCommand("sm_death_chance 1");
             LogMessage("Started potion mode");
+        }
+
+        case(GIMMICK_RPG):
+        {
+            PrintCenterTextAll("HL2 ROCKET LAUNCHER MODE");
+            ServerCommand("sm_weapon_only_weapon weapon_rpg");
+            ServerCommand("sm_weapon_only 1");
+            LogMessage("Started rpg only mode");
+        }
+
+        case(GIMMICK_XBOW):
+        {
+            PrintCenterTextAll("SECRET UNUSED WEAPON MODE");
+            ServerCommand("sm_weapon_only_weapon weapon_crossbow");
+            ServerCommand("sm_weapon_only 1");
+            LogMessage("Started xbow only mode");
         }
 
 
