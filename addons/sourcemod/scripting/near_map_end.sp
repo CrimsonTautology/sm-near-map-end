@@ -3,7 +3,7 @@
 #include <sourcemod>
 #include <sdktools>
 
-#define PLUGIN_VERSION		"1.0.0"
+#define PLUGIN_VERSION		"1.0.1"
 #define PLUGIN_NAME         "[FoF] Near Map End Gimmicks"
 
 new Handle:g_Cvar_Enabled = INVALID_HANDLE;
@@ -56,12 +56,12 @@ public Plugin:myinfo =
 
 public OnPluginStart()
 {
-    CreateConVar( "sm_near_map_end_version", PLUGIN_VERSION, PLUGIN_NAME, FCVAR_PLUGIN | FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
+    CreateConVar( "sm_near_map_end_version", PLUGIN_VERSION, PLUGIN_NAME, FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
     g_Cvar_Enabled = CreateConVar(
             "sm_near_map_end",
             "1",
             "Set to 1 to enable the near map end plugin",
-            FCVAR_PLUGIN | FCVAR_REPLICATED | FCVAR_NOTIFY,
+            FCVAR_REPLICATED | FCVAR_NOTIFY,
             true,
             0.0,
             true,
@@ -70,7 +70,7 @@ public OnPluginStart()
             "sm_near_map_end_time",
             "60",
             "Enable near map end at this time from end (in seconds)",
-            FCVAR_PLUGIN,
+            0,
             true,
             0.0);
 
