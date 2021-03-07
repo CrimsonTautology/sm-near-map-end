@@ -1,16 +1,26 @@
+/**
+ * vim: set ts=4 :
+ * =============================================================================
+ * Super kick
+ * Activate a random gimmick just before the end of a map round.
+ *
+ * Copyright 2021 CrimsonTautology
+ * =============================================================================
+ */
 #pragma semicolon 1
+#pragma newdecls required
 
 #include <sourcemod>
 #include <sdktools>
 
-#define PLUGIN_VERSION		"1.0.1"
-#define PLUGIN_NAME         "[FoF] Near Map End Gimmicks"
+#define PLUGIN_VERSION "1.10.0"
+#define PLUGIN_NAME "[FoF] Near Map End Gimmicks"
 
-new Handle:g_Cvar_Enabled = INVALID_HANDLE;
-new Handle:g_Cvar_NearMapEndTime = INVALID_HANDLE;
-new bool:g_InNearMapEnd = false;
+ConVar g_EnabledCvar;
+ConVar g_NearMapEndTimeCvar;
+bool g_InNearMapEnd = false;
 
-#define MAX_GIMMICKS		24
+#define MAX_GIMMICKS 24
 enum gimmicks
 {
     GIMMICK_AXE = 0,
@@ -22,42 +32,37 @@ enum gimmicks
     GIMMICK_SHOTGUN,
     GIMMICK_WALKER,
     GIMMICK_BOW,
-    //GIMMICK_DYNAMITE,
     GIMMICK_DERINGER,
     GIMMICK_VOLCANIC,
     GIMMICK_PEACEMAKER,
-    //GIMMICK_GHOSTS,
     GIMMICK_HORSES,
     GIMMICK_KABOOM,
-
     GIMMICK_MARESLEG,
     GIMMICK_SAWEDOFF,
     GIMMICK_COACHGUN,
     GIMMICK_SMITH,
     GIMMICK_HENRY,
-
     GIMMICK_DRUNK,
-
     GIMMICK_WHISKEY,
     GIMMICK_POTION,
-
     GIMMICK_RPG,
     GIMMICK_XBOW,
 }
 
-public Plugin:myinfo =
+public Plugin myinfo =
 {
     name = PLUGIN_NAME,
     author = "CrimsonTautology",
     description = "Choose a random gimmick near map end",
     version = PLUGIN_VERSION,
-    url = "https://github.com/CrimsonTautology/sm_near_map_end"
+    url = "https://github.com/CrimsonTautology/sm-near-map-end"
 };
 
-public OnPluginStart()
+public void OnPluginStart()
 {
-    CreateConVar( "sm_near_map_end_version", PLUGIN_VERSION, PLUGIN_NAME, FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
-    g_Cvar_Enabled = CreateConVar(
+    CreateConVar("sm_near_map_end_version", PLUGIN_VERSION, PLUGIN_NAME,
+            FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
+    g_EnabledCvar = CreateConVar(
             "sm_near_map_end",
             "1",
             "Set to 1 to enable the near map end plugin",
@@ -66,7 +71,7 @@ public OnPluginStart()
             0.0,
             true,
             1.0);
-    g_Cvar_NearMapEndTime = CreateConVar(
+    g_NearMapEndTimeCvar = CreateConVar(
             "sm_near_map_end_time",
             "60",
             "Enable near map end at this time from end (in seconds)",
@@ -77,31 +82,31 @@ public OnPluginStart()
     AutoExecConfig();
 }
 
-public OnMapStart()
+public void OnMapStart()
 {
     g_InNearMapEnd = false;
-    CreateTimer( 1.0, Timer_Repeat, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE );
-    PrecacheSound( "vehicles/train/whistle.wav", true );
+    CreateTimer(1.0, Timer_Repeat, .flags = TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+    PrecacheSound("vehicles/train/whistle.wav", true);
 }
 
-bool:IsNearMapEndEnabled()
+bool IsNearMapEndEnabled()
 {
-    return GetConVarBool(g_Cvar_Enabled) && GetConVarInt(g_Cvar_NearMapEndTime) > 0;
+    return g_EnabledCvar.BoolValue && g_NearMapEndTimeCvar.IntValue > 0;
 }
 
-bool:InNearMapEnd()
+bool InNearMapEnd()
 {
     return g_InNearMapEnd;
 }
 
-public Action:Timer_Repeat(Handle:timer)
+Action Timer_Repeat(Handle timer)
 {
     if(!IsNearMapEndEnabled()) return Plugin_Handled;
     if(InNearMapEnd()) return Plugin_Handled;
 
-    new time_left, near_map_end_time;
+    int time_left, near_map_end_time;
     GetMapTimeLeft(time_left);
-    near_map_end_time = GetConVarInt(g_Cvar_NearMapEndTime);
+    near_map_end_time = g_NearMapEndTimeCvar.IntValue;
 
     if(time_left > 0 && time_left <= near_map_end_time)
     {
@@ -112,15 +117,15 @@ public Action:Timer_Repeat(Handle:timer)
     return Plugin_Handled;
 }
 
-public StartNearMapEnd()
+void StartNearMapEnd()
 {
-    new pitch = GetRandomInt(85, 110);
+    int pitch = GetRandomInt(85, 110);
 
-    //Set some end of map settings
+    // set some end of map settings
     ServerCommand("fof_sv_item_respawn_time 1.0");
     ServerCommand("fof_sv_wcrate_regentime 1.0");
 
-    //Get random gimmick
+    // get random gimmick
     switch(GetRandomInt(0, MAX_GIMMICKS - 1))
     {
         case(GIMMICK_JETPACK):
@@ -179,16 +184,6 @@ public StartNearMapEnd()
             LogMessage("Started walker mode");
         }
 
-        /*
-        case(GIMMICK_DYNAMITE):
-        {
-            PrintCenterTextAll("DYNAMITE ONLY");
-            ServerCommand("sm_weapon_only_weapon weapon_dynamite_black");
-            ServerCommand("sm_weapon_only 1");
-            LogMessage("Started dynamite mode");
-        }
-        */
-
         case(GIMMICK_BOW):
         {
             PrintCenterTextAll("Here come the Indians");
@@ -228,19 +223,6 @@ public StartNearMapEnd()
             ServerCommand("sm_weapon_only 1");
             LogMessage("Started peacemaker mode");
         }
-
-        /* 
-        //NOTE:  Due to a game change if you kill a ghost with dynamite the server will crash
-        case(GIMMICK_GHOSTS):
-        {
-            PrintCenterTextAll("G-G-Ghosts!");
-            ServerCommand("sm_death_chance_class fof_ghost");
-            ServerCommand("sm_death_chance_percentage 0.25");
-            ServerCommand("sm_death_chance_ammount 1");
-            ServerCommand("sm_death_chance 1");
-            LogMessage("Started ghosts mode");
-        }
-        */
 
         case(GIMMICK_HORSES):
         {
@@ -347,29 +329,23 @@ public StartNearMapEnd()
             LogMessage("Started xbow only mode");
         }
 
-
-        //ideas
-
-        //Land of chocolate
-        //sv_cheats 1; mat_fullbright 2; sv_cheats 0
-
     }
     
 
-    for (new client=1; client <= MaxClients; client++)
+    for (int client=1; client <= MaxClients; client++)
     {
         if(!IsClientInGame(client)) continue;
 
-        CreateTimer(GetRandomFloat( 0.0, 2.0 ), Timer_PlayerTaunt, GetClientUserId(client));
+        CreateTimer(GetRandomFloat(0.0, 2.0), Timer_PlayerTaunt, GetClientUserId(client));
         EmitSoundToClient(client, "vehicles/train/whistle.wav", .flags = SND_CHANGEPITCH, .pitch = pitch );
     }
 }
 
-public Action:Timer_PlayerTaunt( Handle:timer, any:player )
+Action Timer_PlayerTaunt(Handle timer, int userid)
 {
-    new client = GetClientOfUserId(player);
+    int client = GetClientOfUserId(userid);
 
-    if(client <= 0) return Plugin_Stop;
+    if(!(0 < client <= MaxClients)) return Plugin_Stop;
     if(!IsClientInGame(client)) return Plugin_Stop;
     if(!IsPlayerAlive(client)) return Plugin_Stop;
 
@@ -378,7 +354,7 @@ public Action:Timer_PlayerTaunt( Handle:timer, any:player )
     return Plugin_Stop;
 }
 
-public ForceTaunt(client)
+void ForceTaunt(int client)
 {
     FakeClientCommand(client, "vc 8 3");
 }
